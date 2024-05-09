@@ -52,54 +52,45 @@ TreeMap * createTreeMap(int (*lower_than) (void* key1, void* key2))
 
 void insertTreeMap(TreeMap * tree, void* key, void * value) 
 {
-    TreeNode *nuevoNodo = (TreeNode *)malloc(sizeof(TreeNode));
-    if (nuevoNodo == NULL) return;
-
-    nuevoNodo->pair = (Pair *)malloc(sizeof(Pair));
-    if (nuevoNodo->pair == NULL)
+    TreeNode *newNode = malloc(sizeof(TreeNode));
+    newNode->pair = (Pair*)malloc(sizeof(Pair));
+    if (newNode->pair == NULL)
     {
-        free(nuevoNodo);
+        free(newNode);
         return;
     }
-    nuevoNodo->pair->key = key;
-    nuevoNodo->pair->value = value;
-    nuevoNodo->parent = nuevoNodo->left = nuevoNodo->right = NULL;
+    newNode->pair->key = key;
+    newNode->pair->value = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
 
     if (tree->root == NULL)
     {
-        tree->root = nuevoNodo;
-        return;
-    }
-    TreeNode *aux = tree->root;
-    while (aux != NULL)
-        {
-            if (tree->lower_than(key, aux->pair->key))
-            {
-                if (aux->left == NULL)
-                {
-                    aux->left = nuevoNodo;
-                    nuevoNodo->parent = aux;
-                    return;
+        tree->root = newNode;
+    }else{
+        TreeNode *temp = tree->root;
+        while (1){
+            if (key < temp->pair->key){
+                if (temp->left == NULL){
+                    temp->left = newNode;
+                    break;
+                }else{
+                    temp = temp->left;
                 }
-                else
-                {
-                    aux = aux->left;    
+            }else if (key > temp->pair->key){
+                if (temp->right == NULL){
+                    temp->right = newNode;
+                    break;
+                }else{
+                    temp = temp->right;
                 }
-            }
-            else
-            {
-                if (aux->right == NULL)
-                {
-                    aux->right = nuevoNodo;
-                    nuevoNodo->parent = aux;
-                    return;
-                }
-                else
-                {
-                    aux = aux->right;    
-                }
+            }else{
+                temp->pair->value = value;
+                free(newNode);
+                break;
             }
         }
+    }
 }
 
 TreeNode * minimum(TreeNode * x){
