@@ -95,12 +95,70 @@ void insertTreeMap(TreeMap * tree, void* key, void * value)
 }
 
 TreeNode * minimum(TreeNode * x){
+    if (x == NULL){
+        return NULL;
+    }
+    while (x->left != NULL){
+        x = x->left;
+    }
 
-    return NULL;
+    return x;
 }
 
 
 void removeNode(TreeMap * tree, TreeNode* node) {
+    TreeNode *temp = tree->root;
+    TreeNode *parent = NULL;
+
+    while(temp !=NULL && temp->pair->key != node->pair->key){
+        parent = temp;
+        if (node->pair->key < temp->pair->key)
+            temp = temp->left;
+        else
+            temp = temp->right;
+    }
+
+    if (temp == NULL)
+        return;
+
+    if (temp->left == NULL && temp->right == NULL){
+        if (temp != tree->root){
+            if (parent->left == temp)
+                parent->left = NULL;
+            else
+                parent->right = NULL;
+        }else{
+            tree->root = NULL;
+        }
+        free(temp);
+    }
+
+    else if (temp->left == NULL || temp->right == NULL){
+        TreeNode *child;
+        if (temp->left != NULL)
+            child = temp->left;
+        else
+            child = temp->right;
+
+        if (temp != tree->root){
+            if (parent->left == temp)
+                parent->left = child;
+            else
+                parent->right = child;
+        }else{
+            tree->root = child;
+        }
+        free (temp);
+    }
+
+    else{
+        TreeNode *successor = minimum(temp->right);
+        int succKey = *((int*)successor->pair->key);
+        void *succData = successor->pair->value;
+        removeNode(tree, successor);
+        temp->pair->key = succKey;
+        temp->pair->value = succData;   
+    }
 
 }
 
