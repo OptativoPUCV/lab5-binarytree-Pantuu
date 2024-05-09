@@ -156,7 +156,7 @@ void removeNode(TreeMap * tree, TreeNode* node) {
         int succKey = *((int*)successor->pair->key);
         void *succData = successor->pair->value;
         removeNode(tree, successor);
-        temp->pair->key = succKey;
+        //temp->pair->key = succKey;
         temp->pair->value = succData;   
     }
 
