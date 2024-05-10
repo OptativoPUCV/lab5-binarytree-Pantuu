@@ -53,48 +53,45 @@ TreeMap * createTreeMap(int (*lower_than) (void* key1, void* key2))
 
 void insertTreeMap(TreeMap * tree, void* key, void * value) 
 {
-    TreeNode *newNode = malloc(sizeof(TreeNode));
-    newNode->pair = (Pair*)malloc(sizeof(Pair));
-    if (newNode->pair == NULL)
-    {
-        free(newNode);
-        return;
-    }
-    newNode->pair->key = key;
-    newNode->pair->value = value;
-    newNode->left = NULL;
-    newNode->right = NULL;
-
+    if (tree == NULL)return;
     if (tree->root == NULL)
     {
-        tree->root = newNode;
-    }else{
-        TreeNode *temp = tree->root;
-        while (true){
-            if (tree->lower_than(key, temp->pair->key)){
-                    if (temp->left == NULL){
-                        temp->left = newNode;
-                        break;
-                    }else{
-                        temp = temp->left;
-                    }
+        tree->root = createTreeNode(key, value);
+        return;
+    }
+
+    TreeNode * aux = tree->root;
+    while (aux != NULL)
+        {
+            if (is_equal(tree, key, aux->pair->key))
+            {
+                return;
+            }
+            if (tree->lower_than(key, aux->pair->key))
+            {
+                if (aux->left == NULL)
+                {
+                    TreeNode *new = createTreeNode(key, value);
+                    new->parent = aux;
+                    aux->left = new;
+                    tree->current = new;
+                    return;
                 }
-            else if (tree->lower_than(temp->pair->key, key)){
-                if (temp->right == NULL){
-                    temp->right = newNode;
-                    break;
-                }else{
-                    temp = temp->right;
+                if (aux->left != NULL) aux = aux->left;
+            }
+            if (tree->lower_than(aux->pair->key, key))
+            {
+                if (aux->right == NULL)
+                {
+                    TreeNode *new = createTreeNode(key, value);
+                    new->parent = aux;
+                    aux->right = new;
+                    tree->current = new;
+                    return;
                 }
-            }else{
-                free(newNode->pair);
-                newNode->pair = temp->pair;
-                temp->pair = newNode->pair;
-                free(newNode);
-                break;
+                if (aux->right != NULL) aux = aux->right;
             }
         }
-    }
 }
 
 TreeNode * minimum(TreeNode * x){
