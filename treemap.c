@@ -141,10 +141,10 @@ void removeNode(TreeMap * tree, TreeNode* node) {
     }
     else if (node->left != NULL && node->right != NULL)
     {
-        TreeNode *minimum_aux = minimum(node->right);
-        node->pair->key = minimum_aux->pair->key;
-        node->pair->value = minimum_aux->pair->value;
-        removeNode(tree, minimum_aux);
+        TreeNode *aux = minimum(node->right);
+        node->pair->key = aux->pair->key;
+        node->pair->value = aux->pair->value;
+        removeNode(tree, aux);
     }
 
 }
