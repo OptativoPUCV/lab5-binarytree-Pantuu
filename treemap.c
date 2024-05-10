@@ -105,57 +105,46 @@ TreeNode * minimum(TreeNode * x){
 
 
 void removeNode(TreeMap * tree, TreeNode* node) {
-    TreeNode *temp = tree->root;
-    TreeNode *parent = NULL;
-
-    while(temp !=NULL && temp->pair->key != node->pair->key){
-        parent = temp;
-        if (node->pair->key < temp->pair->key)
-            temp = temp->left;
-        else
-            temp = temp->right;
+    if (node->left == NULL && node->right == NULL)
+    {
+        if (node->parent->left == node) node->parent->left = NULL;
+        if (node->parent->right == node) node->parent->right = NULL;
     }
-
-    if (temp == NULL)
-        return;
-
-    if (temp->left == NULL && temp->right == NULL){
-        if (temp != tree->root){
-            if (parent->left == temp)
-                parent->left = NULL;
-            else
-                parent->right = NULL;
-        }else{
-            tree->root = NULL;
+    else if (node->left == NULL || node->right == NULL)
+    {
+        if (node->left == NULL)
+        {
+            if (node->parent->left == node)
+            {
+                node->parent->left = node->left;
+                node->left->parent = node->parent;
+            }
+            if (node->parent->right == node)
+            {
+                node->parent->right = node->left;
+                node->left->parent = node->parent;
+            }
         }
-        free(temp);
-    }
-
-    else if (temp->left == NULL || temp->right == NULL){
-        TreeNode *child;
-        if (temp->left != NULL)
-            child = temp->left;
-        else
-            child = temp->right;
-
-        if (temp != tree->root){
-            if (parent->left == temp)
-                parent->left = child;
-            else
-                parent->right = child;
-        }else{
-            tree->root = child;
+        else if (node->right != NULL)
+        {
+            if (node->parent->left == node)
+            {
+                node->parent->left = node->right;
+                node->right->parent = node->parent;
+            }
+            if (node->parent->right == node)
+            {
+                node->parent->right = node->right;
+                node->right->parent = node->parent;
+            }
         }
-        free (temp);
     }
-
-    else{
-        TreeNode *successor = minimum(temp->right);
-        //int succKey = *((int*)successor->pair->key);
-        void *succData = successor->pair->value;
-        removeNode(tree, successor);
-        //temp->pair->key = succKey;
-        temp->pair->value = succData;   
+    else if (node->left != NULL && node->right != NULL)
+    {
+        TreeNode *minimum_aux = minimum(node->right);
+        node->pair->key = minimum_aux->pair->key;
+        node->pair->value = minimum_aux->pair->value;
+        removeNode(tree, minimum_aux);
     }
 
 }
